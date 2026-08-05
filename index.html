@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SERA — AI-Powered Work Freedom Platform</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<script>
+tailwind.config={theme:{extend:{colors:{base:'#f8fafc',surface:'#ffffff',card:'#ffffff',cardhv:'#f1f5f9',cyan:'#0891b2',purp:'#7c3aed',mint:'#059669',amber:'#d97706',rose:'#e11d48',txt:'#0f172a',muted:'#64748b',bord:'#e2e8f0'},fontFamily:{display:['Syne','sans-serif'],body:['DM Sans','sans-serif']}}}}
+</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-family:'DM Sans',sans-serif}
+body{background:#f8fafc;color:#0f172a;overflow-x:hidden}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:#06060f}
+::-webkit-scrollbar-thumb{background:#1f1f35;border-radius:4px}
+
+/* Glow utilities */
+.glow-cyan{box-shadow:0 0 30px rgba(0,229,255,0.15),0 0 60px rgba(0,229,255,0.05)}
+.glow-purp{box-shadow:0 0 30px rgba(139,92,246,0.15),0 0 60px rgba(139,92,246,0.05)}
+.glow-mint{box-shadow:0 0 30px rgba(6,214,160,0.15)}
+.text-gradient{background:linear-gradient(135deg,#00e5ff,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.text-gradient-warm{background:linear-gradient(135deg,#f59e0b,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* Glass card */
+.glass{background:rgba(255,255,255,0.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(0,0,0,0.06);box-shadow:0 4px 20px rgba(0,0,0,0.04)}
+
+/* Dot grid background */
+.dot-grid{background-image:radial-gradient(rgba(0,0,0,0.04) 1px,transparent 1px);background-size:32px 32px}
+
+/* Fade up */
+.fade-up{opacity:0;transform:translateY(28px);transition:opacity 600ms ease,transform 600ms ease}
+.fade-up.vis{opacity:1;transform:translateY(0)}
+
+/* Carousel */
+.carousel-track{display:flex;transition:transform 500ms cubic-bezier(0.4,0,0.2,1)}
+.carousel-slide{min-width:100%;flex-shrink:0}
+
+/* Dashboard mockup */
+.dash-frame{border-radius:16px;overflow:hidden;box-shadow:0 0 80px rgba(0,229,255,0.08),0 25px 50px rgba(0,0,0,0.5)}
+.dash-sidebar{width:64px;background:#0a0a16;border-right:1px solid rgba(255,255,255,0.04)}
+.dash-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#7a7a95;transition:all 200ms;cursor:pointer;font-size:14px}
+.dash-icon:hover,.dash-icon.active{background:rgba(0,229,255,0.1);color:#00e5ff}
+.dash-stat{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.04);border-radius:12px;padding:14px 16px}
+
+/* Progress bar animation */
+@keyframes progressFill{from{width:0}to{width:var(--target-w)}}
+.progress-bar{animation:progressFill 1.5s ease forwards}
+
+/* Counter animation handled by JS */
+
+/* SERA chat bubble */
+@keyframes bubbleIn{from{opacity:0;transform:translateY(10px) scale(0.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+.chat-bubble{animation:bubbleIn 400ms ease forwards}
+
+/* Breathing glow */
+@keyframes breatheGlow{0%,100%{opacity:0.6;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
+.breathe{animation:breatheGlow 4s ease-in-out infinite}
+
+/* Tab underline */
+.tab-btn{position:relative;padding-bottom:8px}
+.tab-btn::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:transparent;border-radius:1px;transition:background 300ms}
+.tab-btn.active::after{background:linear-gradient(90deg,#00e5ff,#8b5cf6)}
+
+/* Modal */
+.modal-overlay{transition:opacity 300ms}
+.modal-content{transition:transform 300ms ease,opacity 300ms ease}
+
+/* Segment btn */
+.seg-btn{padding:8px 18px;border-radius:8px;font-weight:500;font-size:13px;transition:all 200ms;cursor:pointer;border:1px solid #1f1f35;background:transparent;color:#7a7a95}
+.seg-btn.sel{background:#00e5ff;color:#06060f;border-color:#00e5ff;font-weight:600}
+
+/* OTP box */
+.otp-box{width:46px;height:54px;text-align:center;font-size:20px;font-weight:600;border:2px solid #1f1f35;border-radius:10px;background:#0e0e1a;color:#e8e8f0;outline:none;transition:border-color 200ms;font-family:'DM Sans',sans-serif}
+.otp-box:focus{border-color:#00e5ff;box-shadow:0 0 0 3px rgba(0,229,255,0.1)}
+
+/* Smooth section transitions */
+.section-skiller,.section-business{transition:opacity 400ms ease,transform 400ms ease}
+.section-hidden{opacity:0;transform:translateY(16px);pointer-events:none;position:absolute;width:100%;left:0}
+.section-visible{opacity:1;transform:translateY(0);pointer-events:auto;position:relative}
+
+/* Reduced motion */
+@media(prefers-reduced-motion:reduce){.fade-up{opacity:1;transform:none;transition:none}.breathe{animation:none}.carousel-track{transition:none}}
+
+/* Intro Video Overlay */
+#introOverlay {
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+#introOverlay.hide {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+body.intro-active {
+  overflow: hidden;
+}
+
+:focus-visible{outline:2px solid #00e5ff;outline-offset:2px;border-radius:4px}
+</style>
+<style>
+/* Fallback utilities in case Tailwind CDN is unavailable */
+.hidden{display:none!important}
+</style>
+</head>
+ 
+<body class="dot-grid">
+  <!-- ========== INTRO VIDEO OVERLAY ========== -->
+  <!-- Centered video + blurred website background + Skip button -->
+  <div id="introOverlay" class="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+    <!-- Blurry dark background (website stays visible but blurred) -->
+    <div class="absolute inset-0 bg-black/55 backdrop-blur-md"></div>
+
+    <!-- Skip Button -->
+    <button id="skipIntro" class="absolute top-5 right-5 z-20 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white text-sm font-medium border border-white/20 transition">
+      Skip
+    </button>
+
+    <!-- Centered Video Box (not full screen) -->
+    <div id="introVideoBox" class="relative z-10 w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl border border-gray-200 bg-white">
+      <video id="introVideo" class="w-full aspect-video object-cover" playsinline muted preload="auto" autoplay>
+        <source src="assets/Sera.mp4" type="video/mp4">
+      </video>
+      <!-- Small loading state -->
+      <div id="introFallback" class="absolute inset-0 flex items-center justify-center bg-white">
+        <div class="text-center">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan to-purp flex items-center justify-center mx-auto mb-3 breathe">
+            <i class="fa-solid fa-atom text-white text-lg"></i>
+          </div>
+          <p class="text-muted text-sm">Loading SERA…</p>
+        </div>
+      </div>
+      <!-- Unmute Button -->
+      <button id="unmuteBtn" class="absolute bottom-4 right-4 z-20 px-4 py-2 rounded-full bg-black/70 hover:bg-black text-white text-sm font-medium flex items-center gap-2 transition">
+        <i class="fa-solid fa-volume-xmark"></i>
+        <span>Unmute</span>
+      </button>
+    </div>
+  </div>
+
+<!-- ============ HEADER ============ -->
+<header id="header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white/80 backdrop-blur-xl border-b border-bord">
+<div class="max-w-7xl mx-auto px-5 py-3.5 flex items-center justify-between">
+  <!-- Logo -->
+  <a href="#" class="flex items-center gap-2.5">
+    <div class="relative w-9 h-9 rounded-xl bg-gradient-to-br from-cyan to-purp flex items-center justify-center breathe">
+      <i class="fa-solid fa-atom text-white text-base"></i>
+    </div>
+    <span class="font-display font-700 text-xl tracking-tight">SERA</span>
+  </a>
+
+  <!-- Audience Tabs -->
+  <div class="hidden sm:flex items-center gap-6">
+    <button class="tab-btn active font-display font-600 text-sm tracking-wide" data-tab="skiller" onclick="switchTab('skiller')">For Skillers</button>
+    <button class="tab-btn font-display font-600 text-sm tracking-wide text-muted" data-tab="business" onclick="switchTab('business')">For Business</button>
+  </div>
+
+  <!-- CTA + Mobile -->
+  <div class="flex items-center gap-3">
+    <button onclick="openModal()" class="bg-cyan hover:bg-cyan/90 text-base font-semibold text-sm px-5 py-2.5 rounded-xl transition-all shadow-lg shadow-cyan/20">Join Now</button>
+    <button id="mobBtn" class="sm:hidden w-9 h-9 rounded-lg flex items-center justify-center text-muted hover:text-txt transition-colors" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
+  </div>
+</div>
+<!-- Mobile tabs -->
+<div id="mobMenu" class="hidden sm:hidden px-5 pb-3 flex gap-4">
+  <button class="tab-btn active font-display font-600 text-sm" data-tab="skiller" onclick="switchTab('skiller')">For Skillers</button>
+  <button class="tab-btn font-display font-600 text-sm text-muted" data-tab="business" onclick="switchTab('business')">For Business</button>
+</div>
+</header>
+
+<main>
+<!-- ============ HERO ============ -->
+<section class="relative min-h-screen flex items-center overflow-hidden pt-16">
+  <div class="relative z-10 max-w-7xl mx-auto px-5 py-20 w-full">
+    <div class="max-w-2xl">
+      <div class="fade-up inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass text-xs font-medium text-cyan mb-6">
+        <span class="w-1.5 h-1.5 rounded-full bg-cyan breathe"></span> AI-Powered Work Platform
+      </div>
+      <h1 class="fade-up font-display font-800 text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.05] mb-5" style="transition-delay:80ms">
+        Break free from the<br><span class="text-gradient">9-to-5 trap.</span>
+      </h1>
+      <p class="fade-up text-muted text-base sm:text-lg leading-relaxed max-w-lg mb-8" style="transition-delay:160ms">
+        SERA matches your skills to real paid work — flexible hours, instant payouts, full support. No resumes. No waiting. Just work on your terms.
+      </p>
+      <div class="fade-up flex flex-wrap gap-3" style="transition-delay:240ms">
+        <button onclick="switchTab('skiller');openModal('skiller')" class="bg-cyan hover:bg-cyan/90 text-base font-semibold px-7 py-3.5 rounded-xl transition-all shadow-lg shadow-cyan/20 text-sm">Start as a Skiller</button>
+        <button onclick="switchTab('business');openModal('business')" class="glass hover:bg-white/10 text-txt font-semibold px-7 py-3.5 rounded-xl transition-all text-sm border border-white/10">Hire Talent</button>
+      </div>
+    </div>
+        <!-- Trust stats -->
+    <div class="fade-up mt-16 flex flex-wrap gap-8 sm:gap-12" style="transition-delay:320ms">
+      <div><span class="font-display font-700 text-2xl text-cyan">180+</span><span class="text-muted text-xs ml-2">Early Skillers</span></div>
+      <div><span class="font-display font-700 text-2xl text-purp">22</span><span class="text-muted text-xs ml-2">Pilot Businesses</span></div>
+      <div><span class="font-display font-700 text-2xl text-mint">Under 25 min</span><span class="text-muted text-xs ml-2">Avg. Match Time</span></div>
+      <div><span class="font-display font-700 text-2xl text-amber">Live</span><span class="text-muted text-xs ml-2">Payouts</span></div>
+    </div>
+  </div> <!-- closes max-w-7xl -->
+
+  <!-- Lottie Animation (Right Side) -->
+  <div class="absolute right-8 top-1/2 -translate-y-1/2 w-[400px] h-[400px] pointer-events-none">
+    <lottie-player 
+      src="assets/Spiral-loading animation.json" 
+      background="transparent" 
+      speed="1" 
+      style="width: 100%; height: 100%;" 
+      loop 
+      autoplay>
+    </lottie-player>
+  </div>
+</section>
+
+<!-- ============ SERA CAPABILITIES CAROUSEL ============ -->
+<section class="py-20 px-5 overflow-hidden">
+<div class="max-w-6xl mx-auto">
+  <p class="fade-up text-cyan font-display font-600 text-xs tracking-[0.2em] uppercase mb-2 text-center">Meet SERA</p>
+  <h2 class="fade-up font-display font-700 text-3xl md:text-5xl text-center mb-12">Your AI work companion</h2>
+  <div class="fade-up relative">
+    <div class="overflow-hidden rounded-2xl">
+      <div class="carousel-track" id="carouselTrack">
+        <!-- Slide 1 -->
+        <div class="carousel-slide p-6 sm:p-10 md:p-14">
+          <div class="flex flex-col md:flex-row items-center gap-10">
+            <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-cyan/20 to-cyan/5 flex items-center justify-center glow-cyan flex-shrink-0"><i class="fa-solid fa-bullseye text-cyan text-3xl sm:text-4xl"></i></div>
+            <div>
+              <h3 class="font-display font-700 text-xl sm:text-2xl mb-3">Precision Matching</h3>
+              <p class="text-muted text-sm sm:text-base leading-relaxed max-w-lg">SERA reads your skills, availability, and location — then matches you to work that fits. Not just any work. The right work. For businesses, SERA handpicks verified skillers from a vetted pool using AI profiling.</p>
+            </div>
+          </div>
+        </div>
+        <!-- Slide 2 -->
+        <div class="carousel-slide p-6 sm:p-10 md:p-14">
+          <div class="flex flex-col md:flex-row items-center gap-10">
+            <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-mint/20 to-mint/5 flex items-center justify-center glow-mint flex-shrink-0"><i class="fa-solid fa-coins text-mint text-3xl sm:text-4xl"></i></div>
+            <div>
+              <h3 class="font-display font-700 text-xl sm:text-2xl mb-3">Flexible Payouts</h3>
+              <p class="text-muted text-sm sm:text-base leading-relaxed max-w-lg">Get paid per hour, per project, or per milestone — you choose. SERA calculates optimal payout based on your schedule, market rates, and urgency. Funds hit your account within 24 hours of completion.</p>
+            </div>
+          </div>
+        </div>
+        <!-- Slide 3 -->
+        <div class="carousel-slide p-6 sm:p-10 md:p-14">
+          <div class="flex flex-col md:flex-row items-center gap-10">
+            <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-purp/20 to-purp/5 flex items-center justify-center glow-purp flex-shrink-0"><i class="fa-solid fa-chart-line text-purp text-3xl sm:text-4xl"></i></div>
+            <div>
+              <h3 class="font-display font-700 text-xl sm:text-2xl mb-3">Live Work Tracking</h3>
+              <p class="text-muted text-sm sm:text-base leading-relaxed max-w-lg">Every hour logged, every milestone hit, every dollar earned — tracked in real time. SERA makes sure your work counts. Employers see live progress. No ambiguity, no disputes.</p>
+            </div>
+          </div>
+        </div>
+        <!-- Slide 4 -->
+        <div class="carousel-slide p-6 sm:p-10 md:p-14">
+          <div class="flex flex-col md:flex-row items-center gap-10">
+            <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-rose/20 to-rose/5 flex items-center justify-center flex-shrink-0" style="box-shadow:0 0 30px rgba(244,114,182,0.15)"><i class="fa-solid fa-heart-pulse text-rose text-3xl sm:text-4xl"></i></div>
+            <div>
+              <h3 class="font-display font-700 text-xl sm:text-2xl mb-3">Full Support — Always</h3>
+              <p class="text-muted text-sm sm:text-base leading-relaxed max-w-lg">Stuck on a project? Need a mental health break? SERA connects you to real humans for guidance, conflict resolution, and wellness support. We don't just match work — we stand by you.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Carousel nav -->
+    <div class="flex justify-center items-center gap-3 mt-6">
+      <button onclick="prevSlide()" class="w-9 h-9 rounded-lg glass flex items-center justify-center text-muted hover:text-cyan transition-colors" aria-label="Previous"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+      <div class="flex gap-2" id="carouselDots"></div>
+      <button onclick="nextSlide()" class="w-9 h-9 rounded-lg glass flex items-center justify-center text-muted hover:text-cyan transition-colors" aria-label="Next"><i class="fa-solid fa-chevron-right text-xs"></i></button>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ============ FEATURES (TAB-CONDITIONAL) ============ -->
+<section class="py-20 px-5 relative" id="featuresSection">
+<div class="max-w-7xl mx-auto">
+  <!-- Skiller Features -->
+  <div class="section-skiller section-visible" id="skillerFeatures">
+    <p class="fade-up text-cyan font-display font-600 text-xs tracking-[0.2em] uppercase mb-2 text-center">For Skillers</p>
+    <h2 class="fade-up font-display font-700 text-3xl md:text-5xl text-center mb-14">Work on your terms</h2>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div class="fade-up glass rounded-2xl p-7 hover:bg-white/[0.04] transition-all group">
+        <div class="w-12 h-12 rounded-xl bg-cyan/10 flex items-center justify-center mb-5 group-hover:glow-cyan transition-all"><i class="fa-solid fa-bolt text-cyan text-lg"></i></div>
+        <h3 class="font-display font-700 text-lg mb-2">Instant Matching</h3>
+        <p class="text-muted text-sm leading-relaxed">SERA matches you with employers in minutes. No browsing job boards. Work comes to you.</p>
+      </div>
+      <div class="fade-up glass rounded-2xl p-7 hover:bg-white/[0.04] transition-all group" style="transition-delay:60ms">
+        <div class="w-12 h-12 rounded-xl bg-mint/10 flex items-center justify-center mb-5"><i class="fa-solid fa-wallet text-mint text-lg"></i></div>
+        <h3 class="font-display font-700 text-lg mb-2">Flexible Payouts</h3>
+        <p class="text-muted text-sm leading-relaxed">Hourly, per-project, or milestone-based. SERA optimizes your payout. Get paid within 24 hours.</p>
+      </div>
+      <div class="fade-up glass rounded-2xl p-7 hover:bg-white/[0.04] transition-all group" style="transition-delay:120ms">
+        <div class="w-12 h-12 rounded-xl bg-purp/10 flex items-center justify-center mb-5"><i class="fa-solid fa-clock text-purp text-lg"></i></div>
+        <h3 class="font-display font-700 text-lg mb-2">Work Freedom</h3>
+        <p class="text-muted text-sm leading-relaxed">Choose when, where, and how much you work. No minimum hours. No exclusive contracts. Pure freedom.</p>
+      </div>
+      <div class="fade-up glass rounded-2xl p-7 hover:bg-white/[0.04] transition-all group" style="transition-delay:180ms">
+        <div class="w-12 h-12 rounded-xl bg-amber/10 flex items-center justify-center mb-5"><i class="fa-solid fa-shield-halved text-amber text-lg"></i></div>
+        <h3 class="font-display font-700 text-lg mb-2">Dedicated Payments</h3>
+        <p class="text-muted text-sm leading-relaxed">Escrow-protected payments. Your earnings are safe. Dispute resolution built in. Full transparency.</p>
+      </div>
+      <div class="fade-up glass rounded-2xl p-7 hover:bg-white/[0.04] transition-all group" style="transition-delay:240ms">
+        <div class="w-12 h-12 rounded-xl bg-rose/10 flex items-center justify-center mb-5"><i class="fa-solid fa-brain text-rose text-lg"></i></div>
+        <h3 class="font-display font-700 text-lg mb-2">Mental Wellness</h3>
+        <p class="text-muted text-sm leading-relaxed">Burnout? Stress? Access free counseling sessions and wellness resources. Your health matters.</p>
+      </div>
+      <div class="fade-up glass rounded-2xl p-7 hover:bg-white/[0.04] transition-all group" style="transition-delay:300ms">
+        <div class="w-12 h-12 rounded-xl bg-cyan/10 flex items-center justify-center mb-5"><i class="fa-solid fa-robot text-cyan text-lg"></i></div>
+        <h3 class="font-display font-700 text-lg mb-2">SERA AI Companion</h3>
+        <p class="text-muted text-sm leading-relaxed">24/7 AI assistant for project help, schedule optimization, and real-time support. Always learning, always there.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Business Features -->
+  <div class="section-business section-hidden" id="businessFeatures">
+    <p class="fade-up text-purp font-display font-600 text-xs tracking-[0.2em] uppercase mb-2 text-center">For Business</p>
+    <h2 class="fade-up font-display font-700 text-3xl md:text-5xl text-center mb-14">Vast talent, zero hassle</h2>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div class="fade-up glass rounded-2xl p-7 hover:bg-white/[0.04] transition-all group">
+        <div class="w-12 h-12 rounded-xl bg-purp/10 flex items-center justify-center mb-5"><i class="fa-solid fa-users text-purp text-lg"></i></div>
+        <h3 class="font-display font-700 text-lg mb-2">Vast Talent Pool</h3>
+        <p class="text-muted text-sm leading-relaxed">12,000+ verified skillers across 50+ categories. Students, interns, and freelancers — pre-vetted by SERA.</p>
+      </div>
+      <div class="fade-up glass rounded-2xl p-7 hover:bg-white/[0.04] transition-all group" style="transition-delay:60ms">
+        <div class="w-12 h-12 rounded-xl bg-cyan/10 flex items-center justify-center mb-5"><i class="fa-solid fa-microchip text-cyan text-lg"></i></div>
+        <h3 class="font-display font-700 text-lg mb-2">AI-Powered Matching</h3>
+        <p class="text-muted text-sm leading-relaxed">Describe your need. SERA finds the exact skill match — filtered by availability, rating, and proximity.</p>
+      </div>
+      <div class="fade-up glass rounded-2xl p-7 hover:bg-white/[0.04] transition-all group" style="transition-delay:120ms">
+        <div class="w-12 h-12 rounded-xl bg-mint/10 flex items-center justify-center mb-5"><i class="fa-solid fa-badge-check text-mint text-lg"></i></div>
+        <h3 class="font-display font-700 text-lg mb-2">Verified Profiles</h3>
+        <p class="text-muted text-sm leading-relaxed">Every skiller is skill-tested and identity-verified. SERA's confidence score tells you exactly how good the match is.</p>
+      </div>
+      <div class="fade-up glass rounded-2xl p-7 hover:bg-white/[0.04] transition-all group" style="transition-delay:180ms">
+        <div class="w-12 h-12 rounded-xl bg-amber/10 flex items-center justify-center mb-5"><i class="fa-solid fa-sliders text-amber text-lg"></i></div>
+        <h3 class="font-display font-700 text-lg mb-2">Flexible Contracts</h3>
+        <p class="text-muted text-sm leading-relaxed">Hourly, fixed, or retainer. Scale up or down anytime. No lock-ins. Pay only for work delivered.</p>
+      </div>
+      <div class="fade-up glass rounded-2xl p-7 hover:bg-white/[0.04] transition-all group" style="transition-delay:240ms">
+        <div class="w-12 h-12 rounded-xl bg-cyan/10 flex items-center justify-center mb-5"><i class="fa-solid fa-gauge-high text-cyan text-lg"></i></div>
+        <h3 class="font-display font-700 text-lg mb-2">Real-Time Dashboard</h3>
+        <p class="text-muted text-sm leading-relaxed">Track every project, every skiller, every payment live. SERA flags delays before they become problems.</p>
+      </div>
+      <div class="fade-up glass rounded-2xl p-7 hover:bg-white/[0.04] transition-all group" style="transition-delay:300ms">
+        <div class="w-12 h-12 rounded-xl bg-rose/10 flex items-center justify-center mb-5"><i class="fa-solid fa-headset text-rose text-lg"></i></div>
+        <h3 class="font-display font-700 text-lg mb-2">Dedicated Support</h3>
+        <p class="text-muted text-sm leading-relaxed">Human + AI support for hiring, onboarding, and dispute resolution. You're never alone managing talent.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ============ DASHBOARD PREVIEW ============ -->
+<section class="py-20 px-5" id="dashSection">
+<div class="max-w-6xl mx-auto">
+  <p class="fade-up text-cyan font-display font-600 text-xs tracking-[0.2em] uppercase mb-2 text-center">Live Preview</p>
+  <h2 class="fade-up font-display font-700 text-3xl md:text-5xl text-center mb-14">Your dashboard, alive</h2>
+
+  <!-- Skiller Dashboard -->
+  <div class="section-skiller section-visible" id="skillerDash">
+    <div class="fade-up dash-frame glass">
+      <div class="flex">
+        <!-- Sidebar -->
+        <div class="hidden sm:flex flex-col items-center py-5 gap-3 dash-sidebar">
+          <div class="dash-icon active"><i class="fa-solid fa-house"></i></div>
+          <div class="dash-icon"><i class="fa-solid fa-briefcase"></i></div>
+          <div class="dash-icon"><i class="fa-solid fa-wallet"></i></div>
+          <div class="dash-icon"><i class="fa-solid fa-calendar"></i></div>
+          <div class="dash-icon"><i class="fa-solid fa-robot"></i></div>
+          <div class="dash-icon"><i class="fa-solid fa-heart"></i></div>
+        </div>
+        <!-- Main -->
+        <div class="flex-1 p-5 sm:p-7">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <p class="text-muted text-xs">Good evening</p>
+              <p class="font-display font-700 text-lg">Hey Alex <span class="text-cyan">:</span></p>
+            </div>
+            <div class="text-xs text-muted">2 active projects</div>
+          </div>
+          <!-- Stats row -->
+          <div class="grid grid-cols-3 gap-3 mb-6">
+            <div class="dash-stat">
+              <p class="text-muted text-[10px] uppercase tracking-wider mb-1">Hours this week</p>
+              <p class="font-display font-700 text-xl text-cyan" id="skHours">0</p>
+            </div>
+            <div class="dash-stat">
+              <p class="text-muted text-[10px] uppercase tracking-wider mb-1">Earnings</p>
+              <p class="font-display font-700 text-xl text-mint" id="skEarnings">₹0</p>
+            </div>
+            <div class="dash-stat">
+              <p class="text-muted text-[10px] uppercase tracking-wider mb-1">Completion</p>
+              <p class="font-display font-700 text-xl text-purp" id="skCompletion">0%</p>
+            </div>
+          </div>
+          <!-- Project card -->
+          <div class="bg-white/[0.03] rounded-xl p-4 border border-white/[0.04] mb-5">
+            <div class="flex items-center justify-between mb-3">
+              <p class="font-semibold text-sm">Logo Design — TechCo</p>
+              <span class="text-[10px] bg-cyan/10 text-cyan px-2 py-0.5 rounded-md font-medium">In Progress</span>
+            </div>
+            <div class="w-full h-2 rounded-full bg-white/[0.06] overflow-hidden mb-2">
+              <div class="h-full rounded-full bg-gradient-to-r from-cyan to-purp progress-bar" style="--target-w:72%"></div>
+            </div>
+            <div class="flex justify-between text-[10px] text-muted"><span>72% complete</span><span>Due Dec 18</span></div>
+          </div>
+          <!-- Second project -->
+          <div class="bg-white/[0.03] rounded-xl p-4 border border-white/[0.04] mb-5">
+            <div class="flex items-center justify-between mb-3">
+              <p class="font-semibold text-sm">App UI — FinStart</p>
+              <span class="text-[10px] bg-amber/10 text-amber px-2 py-0.5 rounded-md font-medium">Review</span>
+            </div>
+            <div class="w-full h-2 rounded-full bg-white/[0.06] overflow-hidden mb-2">
+              <div class="h-full rounded-full bg-gradient-to-r from-amber to-rose progress-bar" style="--target-w:90%"></div>
+            </div>
+            <div class="flex justify-between text-[10px] text-muted"><span>90% complete</span><span>Due Dec 15</span></div>
+          </div>
+          <!-- SERA chat -->
+          <div class="chat-bubble bg-cyan/[0.08] border border-cyan/20 rounded-xl rounded-bl-sm p-4 max-w-xs">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-5 h-5 rounded-md bg-gradient-to-br from-cyan to-purp flex items-center justify-center"><i class="fa-solid fa-atom text-white text-[8px]"></i></div>
+              <span class="text-cyan text-xs font-semibold">SERA</span>
+            </div>
+            <p class="text-xs text-txt/80 leading-relaxed">Your next payout of ₹4,200 processes Friday. Also, FinStart left a review — 5 stars. Nice work.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Business Dashboard -->
+  <div class="section-business section-hidden" id="businessDash">
+    <div class="fade-up dash-frame glass">
+      <div class="flex">
+        <div class="hidden sm:flex flex-col items-center py-5 gap-3 dash-sidebar">
+          <div class="dash-icon active"><i class="fa-solid fa-gauge"></i></div>
+          <div class="dash-icon"><i class="fa-solid fa-user-plus"></i></div>
+          <div class="dash-icon"><i class="fa-solid fa-list-check"></i></div>
+          <div class="dash-icon"><i class="fa-solid fa-credit-card"></i></div>
+          <div class="dash-icon"><i class="fa-solid fa-robot"></i></div>
+          <div class="dash-icon"><i class="fa-solid fa-gear"></i></div>
+        </div>
+        <div class="flex-1 p-5 sm:p-7">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <p class="text-muted text-xs">Welcome back</p>
+              <p class="font-display font-700 text-lg">Hey Priya <span class="text-purp">:</span></p>
+            </div>
+            <div class="text-xs text-cyan bg-cyan/10 px-2.5 py-1 rounded-lg font-medium">3 new matches</div>
+          </div>
+          <div class="grid grid-cols-3 gap-3 mb-6">
+            <div class="dash-stat">
+              <p class="text-muted text-[10px] uppercase tracking-wider mb-1">Active Skillers</p>
+              <p class="font-display font-700 text-xl text-purp" id="bzSkillers">0</p>
+            </div>
+            <div class="dash-stat">
+              <p class="text-muted text-[10px] uppercase tracking-wider mb-1">Projects Live</p>
+              <p class="font-display font-700 text-xl text-cyan" id="bzProjects">0</p>
+            </div>
+            <div class="dash-stat">
+              <p class="text-muted text-[10px] uppercase tracking-wider mb-1">Total Spent</p>
+              <p class="font-display font-700 text-xl text-amber" id="bzSpent">₹0</p>
+            </div>
+          </div>
+          <!-- Match card -->
+          <div class="bg-white/[0.03] rounded-xl p-4 border border-white/[0.04] mb-5">
+            <div class="flex items-center justify-between mb-3">
+              <p class="font-semibold text-sm">SERA found 4 matches for UI Design</p>
+              <span class="text-[10px] bg-purp/10 text-purp px-2 py-0.5 rounded-md font-medium">New</span>
+            </div>
+            <div class="flex -space-x-2 mb-2">
+              <img src="https://picsum.photos/seed/m1/40/40.jpg" class="w-7 h-7 rounded-full border-2 border-surface object-cover" alt="">
+              <img src="https://picsum.photos/seed/m2/40/40.jpg" class="w-7 h-7 rounded-full border-2 border-surface object-cover" alt="">
+              <img src="https://picsum.photos/seed/m3/40/40.jpg" class="w-7 h-7 rounded-full border-2 border-surface object-cover" alt="">
+              <img src="https://picsum.photos/seed/m4/40/40.jpg" class="w-7 h-7 rounded-full border-2 border-surface object-cover" alt="">
+            </div>
+            <p class="text-[10px] text-muted">Avg. confidence score: 94% — Review and confirm</p>
+          </div>
+          <!-- Project progress -->
+          <div class="bg-white/[0.03] rounded-xl p-4 border border-white/[0.04] mb-5">
+            <div class="flex items-center justify-between mb-3">
+              <p class="font-semibold text-sm">Website Redesign — NovaPay</p>
+              <span class="text-[10px] bg-mint/10 text-mint px-2 py-0.5 rounded-md font-medium">On Track</span>
+            </div>
+            <div class="w-full h-2 rounded-full bg-white/[0.06] overflow-hidden mb-2">
+              <div class="h-full rounded-full bg-gradient-to-r from-purp to-cyan progress-bar" style="--target-w:58%"></div>
+            </div>
+            <div class="flex justify-between text-[10px] text-muted"><span>58% — 3 skillers working</span><span>Deadline: Jan 5</span></div>
+          </div>
+          <!-- SERA insight -->
+          <div class="chat-bubble bg-purp/[0.08] border border-purp/20 rounded-xl rounded-bl-sm p-4 max-w-xs">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-5 h-5 rounded-md bg-gradient-to-br from-cyan to-purp flex items-center justify-center"><i class="fa-solid fa-atom text-white text-[8px]"></i></div>
+              <span class="text-purp text-xs font-semibold">SERA Insight</span>
+            </div>
+            <p class="text-xs text-txt/80 leading-relaxed">Based on your Q2 pipeline, I recommend onboarding 2 more UI skillers. Want me to pre-screen candidates?</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ============ HOW SERA WORKS ============ -->
+<section class="py-20 px-5">
+<div class="max-w-5xl mx-auto">
+  <p class="fade-up text-mint font-display font-600 text-xs tracking-[0.2em] uppercase mb-2 text-center">The Flow</p>
+  <h2 class="fade-up font-display font-700 text-3xl md:text-5xl text-center mb-14">How SERA works</h2>
+  <div class="grid sm:grid-cols-2 gap-5">
+    <div class="fade-up glass rounded-2xl p-7 relative overflow-hidden group hover:bg-white/[0.03] transition-all">
+      <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-cyan to-transparent"></div>
+      <div class="font-display font-800 text-5xl text-white/[0.04] absolute top-4 right-6">01</div>
+      <h3 class="font-display font-700 text-lg mb-2 relative z-10">You Post or Join</h3>
+      <p class="text-muted text-sm leading-relaxed relative z-10">Businesses post requirements. Skillers set their availability and skills. SERA absorbs everything.</p>
+    </div>
+    <div class="fade-up glass rounded-2xl p-7 relative overflow-hidden group hover:bg-white/[0.03] transition-all" style="transition-delay:80ms">
+      <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-purp to-transparent"></div>
+      <div class="font-display font-800 text-5xl text-white/[0.04] absolute top-4 right-6">02</div>
+      <h3 class="font-display font-700 text-lg mb-2 relative z-10">SERA Matches</h3>
+      <p class="text-muted text-sm leading-relaxed relative z-10">AI cross-references skills, location, availability, and ratings. Both sides get a confidence-scored shortlist.</p>
+    </div>
+    <div class="fade-up glass rounded-2xl p-7 relative overflow-hidden group hover:bg-white/[0.03] transition-all" style="transition-delay:160ms">
+      <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-mint to-transparent"></div>
+      <div class="font-display font-800 text-5xl text-white/[0.04] absolute top-4 right-6">03</div>
+      <h3 class="font-display font-700 text-lg mb-2 relative z-10">Work Begins</h3>
+      <p class="text-muted text-sm leading-relaxed relative z-10">Confirm the match. SERA logs hours, tracks milestones, and ensures both sides deliver. Every hour counts.</p>
+    </div>
+    <div class="fade-up glass rounded-2xl p-7 relative overflow-hidden group hover:bg-white/[0.03] transition-all" style="transition-delay:240ms">
+      <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-amber to-transparent"></div>
+      <div class="font-display font-800 text-5xl text-white/[0.04] absolute top-4 right-6">04</div>
+      <h3 class="font-display font-700 text-lg mb-2 relative z-10">You Get Paid</h3>
+      <p class="text-muted text-sm leading-relaxed relative z-10">Work verified? Payout triggers automatically. Flexible terms, escrow-protected, resolved in 24 hours.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ============ TESTIMONIALS ============ -->
+<section class="py-20 px-5">
+<div class="max-w-7xl mx-auto">
+  <p class="fade-up text-amber font-display font-600 text-xs tracking-[0.2em] uppercase mb-2 text-center">Real stories</p>
+  <h2 class="fade-up font-display font-700 text-3xl md:text-5xl text-center mb-14">Heard from the ground</h2>
+  <div class="grid md:grid-cols-3 gap-5">
+    <div class="fade-up glass rounded-2xl p-7 hover:bg-white/[0.03] transition-all">
+      <div class="flex items-center gap-3 mb-4">
+        <img src="https://picsum.photos/seed/ravi22/48/48.jpg" class="w-10 h-10 rounded-full object-cover" alt="Ravi S.">
+        <div><p class="font-semibold text-sm">Ravi S.</p><p class="text-muted text-xs">Graphic Designer, Delhi</p></div>
+      </div>
+      <p class="text-muted text-sm leading-relaxed">"I was stuck in a dead-end internship. SERA matched me with 3 paid projects in my first week. I set my own hours. This is what freedom feels like."</p>
+    </div>
+    <div class="fade-up glass rounded-2xl p-7 hover:bg-white/[0.03] transition-all" style="transition-delay:100ms">
+      <div class="flex items-center gap-3 mb-4">
+        <img src="https://picsum.photos/seed/neha33/48/48.jpg" class="w-10 h-10 rounded-full object-cover" alt="Neha P.">
+        <div><p class="font-semibold text-sm">Neha P.</p><p class="text-muted text-xs">Startup Founder, Bangalore</p></div>
+      </div>
+      <p class="text-muted text-sm leading-relaxed">"We needed 2 UI designers urgently. SERA had verified matches in 20 minutes. The confidence scoring is genius — no bad hires since we started."</p>
+    </div>
+    <div class="fade-up glass rounded-2xl p-7 hover:bg-white/[0.03] transition-all" style="transition-delay:200ms">
+      <div class="flex items-center gap-3 mb-4">
+        <img src="https://picsum.photos/seed/arjun44/48/48.jpg" class="w-10 h-10 rounded-full object-cover" alt="Arjun M.">
+        <div><p class="font-semibold text-sm">Arjun M.</p><p class="text-muted text-xs">App Developer, Pune</p></div>
+      </div>
+      <p class="text-muted text-sm leading-relaxed">"The payout flexibility is unreal. I switch between hourly and project billing depending on the gig. SERA handles the math. I just work."</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="py-24 px-5 relative overflow-hidden">
+  <div class="absolute inset-0" style="background:radial-gradient(ellipse at center,rgba(0,229,255,0.06),rgba(139,92,246,0.04),transparent 70%)"></div>
+  <div class="relative z-10 max-w-3xl mx-auto text-center">
+    <h2 class="fade-up font-display font-800 text-3xl md:text-5xl mb-5">Ready to break the pattern?</h2>
+    <p class="fade-up text-muted text-base sm:text-lg mb-10 leading-relaxed" style="transition-delay:80ms">Whether you're a skiller seeking freedom or a business seeking talent — SERA is your edge.</p>
+    <div class="fade-up flex flex-wrap justify-center gap-3" style="transition-delay:160ms">
+      <button onclick="switchTab('skiller');openModal('skiller')" class="bg-cyan hover:bg-cyan/90 text-base font-semibold px-8 py-4 rounded-xl transition-all shadow-lg shadow-cyan/20">Join as a Skiller</button>
+      <button onclick="switchTab('business');openModal('business')" class="bg-purp hover:bg-purp/90 text-white font-semibold px-8 py-4 rounded-xl transition-all shadow-lg shadow-purp/20">Hire for Business</button>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="border-t border-bord py-12 px-5">
+<div class="max-w-7xl mx-auto grid sm:grid-cols-4 gap-10 mb-10">
+  <div>
+  <div class="flex items-center gap-2.5 mb-2">
+    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan to-purp flex items-center justify-center">
+      <i class="fa-solid fa-atom text-white text-xs"></i>
+    </div>
+    <span class="font-display font-700 text-lg">SERA</span>
+  </div>
+  <p class="text-muted text-xs mb-3">A YoungZone India product</p>
+  <p class="text-muted text-sm leading-relaxed">AI-powered work platform.<br>Freedom for skillers, talent for businesses.</p>
+</div>
+  <div>
+    <h4 class="font-semibold text-sm mb-4">Platform</h4>
+    <a href="#" class="block text-muted hover:text-cyan text-sm py-1 transition-colors">For Skillers</a>
+    <a href="#" class="block text-muted hover:text-cyan text-sm py-1 transition-colors">For Business</a>
+    <a href="#" class="block text-muted hover:text-cyan text-sm py-1 transition-colors">How SERA Works</a>
+  </div>
+  <div>
+  <h4 class="font-semibold text-sm mb-4">Contact</h4>
+  <a href="https://wa.me/919011256256" target="_blank" rel="noopener" class="block text-muted hover:text-cyan text-sm py-1 transition-colors">
+    <i class="fa-brands fa-whatsapp mr-2"></i>WhatsApp
+  </a>
+  <a href="mailto:support@youngzoneindia.com" class="block text-muted hover:text-cyan text-sm py-1 transition-colors">
+    <i class="fa-solid fa-envelope mr-2"></i>support@youngzoneindia.com
+  </a>
+</div>
+  <div>
+  <h4 class="font-semibold text-sm mb-4">Follow</h4>
+  <div class="flex gap-2">
+    <a href="https://www.instagram.com/youngzoneindia" target="_blank" rel="noopener" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-cyan/20 hover:text-cyan text-muted flex items-center justify-center transition-all" aria-label="Instagram">
+      <i class="fa-brands fa-instagram text-sm"></i>
+    </a>
+    <a href="https://www.facebook.com/youngzoneindia" target="_blank" rel="noopener" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-cyan/20 hover:text-cyan text-muted flex items-center justify-center transition-all" aria-label="Facebook">
+      <i class="fa-brands fa-facebook-f text-sm"></i>
+    </a>
+  </div>
+</div>
+</div>
+<div class="flex flex-col sm:flex-row justify-between items-center pt-8 border-t border-bord gap-3 max-w-7xl mx-auto">
+  <p class="text-muted text-xs">&copy; 2025 YoungZone India. All rights reserved.</p>
+  <a href="#" class="text-muted/40 hover:text-muted text-xs transition-colors">Admin</a>
+</div>
+</footer>
+
+<!-- ============ ENQUIRY MODAL ============ -->
+<div id="modal" class="fixed inset-0 z-[100] hidden" style="display:none;">
+<div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeModal()"></div>
+<div class="absolute inset-0 flex items-end sm:items-center justify-center p-0 sm:p-6">
+  <div class="relative bg-surface rounded-t-3xl sm:rounded-3xl w-full sm:max-w-lg max-h-[92vh] overflow-y-auto shadow-2xl border border-bord" id="modalBox">
+    <button onclick="closeModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors z-10" aria-label="Close"><i class="fa-solid fa-xmark text-muted text-sm"></i></button>
+
+    <!-- AUTH STATE -->
+    <div id="mJoin" class="p-8 pt-12 hidden">
+      <h3 class="font-display font-700 text-xl mb-1">Join Now</h3>
+      <p class="text-muted text-sm mb-7">Share a few details and verify your phone to submit.</p>
+      <form id="joinForm" onsubmit="submitJoin(event)" class="space-y-4">
+        <div>
+          <label class="text-muted text-xs font-medium mb-1 block">I am a *</label>
+          <select id="joinType" required onchange="updateJoinFields()" class="w-full px-4 py-2.5 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors appearance-none">
+            <option value="">Select</option>
+            <option value="skiller">Skiller</option>
+            <option value="business">Business</option>
+          </select>
+        </div>
+        <div id="joinNameField" class="hidden">
+          <label class="text-muted text-xs font-medium mb-1 block">Full Name *</label>
+          <input type="text" id="joinName" class="w-full px-4 py-2.5 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors" placeholder="Your name">
+        </div>
+        <div id="joinCompanyField" class="hidden">
+          <label class="text-muted text-xs font-medium mb-1 block">Company Name *</label>
+          <input type="text" id="joinCompany" class="w-full px-4 py-2.5 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors" placeholder="Company name">
+        </div>
+        <div class="grid sm:grid-cols-[1fr_auto] gap-3 items-end">
+          <div>
+            <label class="text-muted text-xs font-medium mb-1 block">Phone number *</label>
+            <input type="tel" id="joinPhone" maxlength="10" placeholder="9876543210" class="w-full px-4 py-2.5 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors" oninput="this.value=this.value.replace(/\D/g,'')">
+            <p id="joinPhoneErr" class="text-rose text-xs mt-2 hidden">Enter a valid 10-digit number.</p>
+          </div>
+          <button type="button" onclick="sendOtp()" class="w-full sm:w-auto bg-cyan hover:bg-cyan/90 text-white font-semibold px-5 py-3 rounded-xl transition-all text-sm">Verify</button>
+        </div>
+        <div>
+          <label class="text-muted text-xs font-medium mb-1 block">Email *</label>
+          <input type="email" id="joinEmail" required class="w-full px-4 py-2.5 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors" placeholder="you@example.com">
+        </div>
+        <div>
+          <label class="text-muted text-xs font-medium mb-1 block">Preferred time to call</label>
+          <input type="text" id="joinCallTime" class="w-full px-4 py-2.5 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors" placeholder="e.g. 3 - 5 PM">
+        </div>
+        <div id="joinOtpArea" class="hidden">
+          <p class="text-muted text-sm mb-4">Enter 6-digit code sent to <span id="joinPhDisp" class="font-semibold text-txt">+91 ...</span></p>
+          <div class="flex justify-center gap-2 mb-2">
+            <input type="text" maxlength="1" class="otp-box" oninput="otIn(this,0)" onkeydown="otKd(event,this,0)" aria-label="OTP 1">
+            <input type="text" maxlength="1" class="otp-box" oninput="otIn(this,1)" onkeydown="otKd(event,this,1)" aria-label="OTP 2">
+            <input type="text" maxlength="1" class="otp-box" oninput="otIn(this,2)" onkeydown="otKd(event,this,2)" aria-label="OTP 3">
+            <input type="text" maxlength="1" class="otp-box" oninput="otIn(this,3)" onkeydown="otKd(event,this,3)" aria-label="OTP 4">
+            <input type="text" maxlength="1" class="otp-box" oninput="otIn(this,4)" onkeydown="otKd(event,this,4)" aria-label="OTP 5">
+            <input type="text" maxlength="1" class="otp-box" oninput="otIn(this,5)" onkeydown="otKd(event,this,5)" aria-label="OTP 6">
+          </div>
+          <p class="text-center text-muted text-[10px] mb-5">Demo: any 6 digits</p>
+          <button type="button" id="joinOtpVerifyBtn" onclick="verifyOtp()" class="w-full bg-cyan hover:bg-cyan/90 text-base font-semibold py-3 rounded-xl text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed" disabled>Verify OTP</button>
+        </div>
+        <p class="text-muted text-xs text-center">Verify your phone to continue to the right enquiry form.</p>
+      </form>
+    </div>
+
+    <!-- OTP STATE -->
+    <div id="mOTP" class="p-8 pt-12 hidden">
+      <button onclick="showAuth()" class="flex items-center gap-2 text-muted hover:text-cyan text-xs mb-5 transition-colors"><i class="fa-solid fa-arrow-left"></i> Back</button>
+      <h3 class="font-display font-700 text-xl mb-1">Verify WhatsApp</h3>
+      <p class="text-muted text-sm mb-5">Enter your phone number.</p>
+      <div id="phoneArea">
+        <div class="flex gap-2 mb-4">
+          <div class="flex items-center px-3 py-3 rounded-xl border border-bord text-sm text-muted flex-shrink-0">+91</div>
+          <input type="tel" id="phIn" maxlength="10" placeholder="9876543210" class="flex-1 px-4 py-3 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors font-body" oninput="this.value=this.value.replace(/\D/g,'')">
+        </div>
+        <button onclick="sendOtp()" class="w-full bg-cyan hover:bg-cyan/90 text-base font-semibold py-3 rounded-xl text-sm transition-colors">Send OTP</button>
+        <p id="phErr" class="text-rose text-xs mt-2 hidden">Enter a valid 10-digit number.</p>
+      </div>
+      <div id="otpArea" class="hidden">
+        <p class="text-muted text-sm mb-4">Enter 6-digit code sent to <span id="phDisp" class="font-semibold text-txt">+91 ...</span></p>
+        <div class="flex justify-center gap-2 mb-2">
+          <input type="text" maxlength="1" class="otp-box" oninput="otIn(this,0)" onkeydown="otKd(event,this,0)" aria-label="OTP 1">
+          <input type="text" maxlength="1" class="otp-box" oninput="otIn(this,1)" onkeydown="otKd(event,this,1)" aria-label="OTP 2">
+          <input type="text" maxlength="1" class="otp-box" oninput="otIn(this,2)" onkeydown="otKd(event,this,2)" aria-label="OTP 3">
+          <input type="text" maxlength="1" class="otp-box" oninput="otIn(this,3)" onkeydown="otKd(event,this,3)" aria-label="OTP 4">
+          <input type="text" maxlength="1" class="otp-box" oninput="otIn(this,4)" onkeydown="otKd(event,this,4)" aria-label="OTP 5">
+          <input type="text" maxlength="1" class="otp-box" oninput="otIn(this,5)" onkeydown="otKd(event,this,5)" aria-label="OTP 6">
+        </div>
+        <p class="text-center text-muted text-[10px] mb-5">Demo: any 6 digits</p>
+        <button onclick="verifyOtp()" id="verBtn" class="w-full bg-cyan hover:bg-cyan/90 text-base font-semibold py-3 rounded-xl text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed" disabled>Verify</button>
+      </div>
+    </div>
+
+    <!-- FORM STATE -->
+    <div id="mForm" class="p-8 pt-12 hidden">
+      <h3 class="font-display font-700 text-xl mb-1">Submit your enquiry</h3>
+      <p class="text-muted text-sm mb-5">We'll match you within 24 hours.</p>
+
+      <div id="skillerForm" class="space-y-3.5 hidden">
+        <form onsubmit="submitSkiller(event)">
+          <div>
+            <label class="text-muted text-xs font-medium mb-1 block">Full Name *</label>
+            <input type="text" id="skName" required class="w-full px-4 py-2.5 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors">
+          </div>
+          <div>
+            <label class="text-muted text-xs font-medium mb-1 block">City *</label>
+            <select id="skCity" required class="w-full px-4 py-2.5 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors appearance-none">
+              <option value="">Select City</option>
+              <option>Mumbai</option>
+              <option>Delhi NCR</option>
+              <option>Bangalore</option>
+              <option>Hyderabad</option>
+              <option>Pune</option>
+              <option>Chennai</option>
+              <option>Nagpur</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-muted text-xs font-medium mb-1 block">Phone Number *</label>
+            <div class="flex gap-2 mb-3">
+              <div class="flex items-center px-3 py-3 rounded-xl border border-bord text-sm text-muted flex-shrink-0">+91</div>
+              <input type="tel" id="skPhone" maxlength="10" placeholder="9876543210" class="flex-1 px-4 py-3 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors" oninput="this.value=this.value.replace(/\D/g,'')">
+            </div>
+            <button type="button" onclick="sendFormOtp('skiller')" class="w-full bg-cyan hover:bg-cyan/90 text-white font-semibold py-3 rounded-xl text-sm transition-all">Send OTP</button>
+            <p id="skPhoneErr" class="text-rose text-xs mt-2 hidden">Enter a valid 10-digit number.</p>
+          </div>
+          <div id="skOtpArea" class="hidden">
+            <p class="text-muted text-sm mb-4">Enter 6-digit OTP sent to <span id="skPhDisp" class="font-semibold text-txt">+91 ...</span></p>
+            <div class="flex justify-center gap-2 mb-2">
+              <input type="text" maxlength="1" class="sk-otp otp-box" oninput="otInForm(this,0,'sk')" onkeydown="otKd(event,this,0,'sk')" aria-label="OTP 1">
+              <input type="text" maxlength="1" class="sk-otp otp-box" oninput="otInForm(this,1,'sk')" onkeydown="otKd(event,this,1,'sk')" aria-label="OTP 2">
+              <input type="text" maxlength="1" class="sk-otp otp-box" oninput="otInForm(this,2,'sk')" onkeydown="otKd(event,this,2,'sk')" aria-label="OTP 3">
+              <input type="text" maxlength="1" class="sk-otp otp-box" oninput="otInForm(this,3,'sk')" onkeydown="otKd(event,this,3,'sk')" aria-label="OTP 4">
+              <input type="text" maxlength="1" class="sk-otp otp-box" oninput="otInForm(this,4,'sk')" onkeydown="otKd(event,this,4,'sk')" aria-label="OTP 5">
+              <input type="text" maxlength="1" class="sk-otp otp-box" oninput="otInForm(this,5,'sk')" onkeydown="otKd(event,this,5,'sk')" aria-label="OTP 6">
+            </div>
+            <button type="button" id="skVerifyBtn" onclick="verifyFormOtp('skiller')" class="w-full bg-cyan hover:bg-cyan/90 text-white font-semibold py-3 rounded-xl text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed" disabled>Verify OTP</button>
+            <p id="skVerifiedMsg" class="text-mint text-xs mt-2 hidden text-center">Phone verified successfully</p>
+          </div>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div>
+              <label class="text-muted text-xs font-medium mb-1 block">I am a *</label>
+              <select id="skStatus" required class="w-full px-4 py-2.5 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors appearance-none">
+                <option value="">Select</option>
+                <option>Student</option>
+                <option>Working Professional</option>
+                <option>Freelancer</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-muted text-xs font-medium mb-1 block">Experience *</label>
+              <select id="skExp" required class="w-full px-4 py-2.5 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors appearance-none">
+                <option value="">Select</option>
+                <option>Fresher</option>
+                <option>Experienced</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="text-muted text-xs font-medium mb-1 block">Years of Experience</label>
+            <input type="number" id="skYears" min="0" class="w-full px-4 py-2.5 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors" placeholder="e.g. 2">
+          </div>
+          <div>
+            <label class="text-muted text-xs font-medium mb-1 block">Primary Skill / Category *</label>
+            <select id="skSkill" required class="w-full px-4 py-2.5 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors appearance-none">
+              <option value="">Select</option>
+              <option>UI/UX Design</option>
+              <option>Graphic Design</option>
+              <option>Web Development</option>
+              <option>App Development</option>
+              <option>Content Writing</option>
+              <option>Video Editing</option>
+              <option>Social Media</option>
+              <option>Data Entry</option>
+              <option>Marketing</option>
+              <option>Electrician</option>
+              <option>Plumber</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-muted text-xs font-medium mb-1 block">Other Skills (comma separated)</label>
+            <input type="text" id="skOtherSkills" class="w-full px-4 py-2.5 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors" placeholder="e.g. Figma, Illustrator">
+          </div>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div>
+              <label class="text-muted text-xs font-medium mb-1 block">Preferred Work Mode *</label>
+              <select id="skMode" required class="w-full px-4 py-2.5 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors appearance-none">
+                <option value="">Select</option>
+                <option>Work from Home</option>
+                <option>On-site / Physical</option>
+                <option>Hybrid</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-muted text-xs font-medium mb-1 block">Availability *</label>
+              <select id="skAvail" required class="w-full px-4 py-2.5 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors appearance-none">
+                <option value="">Select</option>
+                <option>Full-time</option>
+                <option>Part-time</option>
+                <option>Flexible Hours</option>
+                <option>Hourly / Project based</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="text-muted text-xs font-medium mb-1 block">Minimum Expected Pay</label>
+            <input type="text" id="skPay" class="w-full px-4 py-2.5 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors" placeholder="e.g. ₹25,000/month">
+          </div>
+          <div class="rounded-3xl border border-white/10 bg-white/5 p-4">
+            <p class="text-muted text-xs font-medium">Adding social handles increases your chance of faster approval</p>
+            <div class="grid gap-3 mt-4">
+              <input type="text" id="skLinkedin" class="w-full px-4 py-2.5 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors" placeholder="LinkedIn profile">
+              <input type="text" id="skInstagram" class="w-full px-4 py-2.5 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors" placeholder="Instagram handle">
+              <input type="text" id="skPortfolio" class="w-full px-4 py-2.5 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors" placeholder="Portfolio / website">
+            </div>
+          </div>
+          <div>
+            <label class="text-muted text-xs font-medium mb-1 block">Tell us about yourself (short)</label>
+            <textarea id="skAbout" rows="3" class="w-full px-4 py-2.5 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors resize-none" placeholder="Share your skills, what you enjoy, or the work you want."></textarea>
+          </div>
+          <button type="submit" id="skSubmitBtn" disabled class="w-full bg-cyan hover:bg-cyan/90 text-base font-semibold py-3.5 rounded-xl text-sm transition-colors shadow-lg shadow-cyan/20 mt-2 disabled:opacity-40 disabled:cursor-not-allowed">Submit Enquiry</button>
+          <p id="skErr" class="text-rose text-xs hidden text-center">Fill all required fields.</p>
+        </form>
+      </div>
+
+      <div id="businessForm" class="space-y-3.5 hidden">
+        <form onsubmit="submitBusiness(event)">
+          <div>
+            <label class="text-muted text-xs font-medium mb-1 block">Company Name *</label>
+            <input type="text" id="bzName" required class="w-full px-4 py-2.5 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors">
+          </div>
+          <div>
+            <label class="text-muted text-xs font-medium mb-1 block">Company Type *</label>
+            <select id="bzType" required class="w-full px-4 py-2.5 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors appearance-none">
+              <option value="">Select</option>
+              <option>Startup</option>
+              <option>Private Limited</option>
+              <option>LLP</option>
+              <option>Proprietorship</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-muted text-xs font-medium mb-1 block">Phone Number *</label>
+            <div class="flex gap-2 mb-3">
+              <div class="flex items-center px-3 py-3 rounded-xl border border-bord text-sm text-muted flex-shrink-0">+91</div>
+              <input type="tel" id="bzPhone" maxlength="10" placeholder="9876543210" class="flex-1 px-4 py-3 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors" oninput="this.value=this.value.replace(/\D/g,'')">
+            </div>
+            <button type="button" onclick="sendFormOtp('business')" class="w-full bg-cyan hover:bg-cyan/90 text-white font-semibold py-3 rounded-xl text-sm transition-all">Send OTP</button>
+            <p id="bzPhoneErr" class="text-rose text-xs mt-2 hidden">Enter a valid 10-digit number.</p>
+          </div>
+          <div id="bzOtpArea" class="hidden">
+            <p class="text-muted text-sm mb-4">Enter 6-digit OTP sent to <span id="bzPhDisp" class="font-semibold text-txt">+91 ...</span></p>
+            <div class="flex justify-center gap-2 mb-2">
+              <input type="text" maxlength="1" class="bz-otp otp-box" oninput="otInForm(this,0,'bz')" onkeydown="otKd(event,this,0,'bz')" aria-label="OTP 1">
+              <input type="text" maxlength="1" class="bz-otp otp-box" oninput="otInForm(this,1,'bz')" onkeydown="otKd(event,this,1,'bz')" aria-label="OTP 2">
+              <input type="text" maxlength="1" class="bz-otp otp-box" oninput="otInForm(this,2,'bz')" onkeydown="otKd(event,this,2,'bz')" aria-label="OTP 3">
+              <input type="text" maxlength="1" class="bz-otp otp-box" oninput="otInForm(this,3,'bz')" onkeydown="otKd(event,this,3,'bz')" aria-label="OTP 4">
+              <input type="text" maxlength="1" class="bz-otp otp-box" oninput="otInForm(this,4,'bz')" onkeydown="otKd(event,this,4,'bz')" aria-label="OTP 5">
+              <input type="text" maxlength="1" class="bz-otp otp-box" oninput="otInForm(this,5,'bz')" onkeydown="otKd(event,this,5,'bz')" aria-label="OTP 6">
+            </div>
+            <button type="button" id="bzVerifyBtn" onclick="verifyFormOtp('business')" class="w-full bg-cyan hover:bg-cyan/90 text-white font-semibold py-3 rounded-xl text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed" disabled>Verify OTP</button>
+            <p id="bzVerifiedMsg" class="text-mint text-xs mt-2 hidden text-center">Phone verified successfully</p>
+          </div>
+          <div>
+            <label class="text-muted text-xs font-medium mb-1 block">Website</label>
+            <input type="url" id="bzWebsite" class="w-full px-4 py-2.5 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors" placeholder="https://">
+          </div>
+          <div>
+            <label class="text-muted text-xs font-medium mb-1 block">City / Location *</label>
+            <select id="bzCity" required class="w-full px-4 py-2.5 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors appearance-none">
+              <option value="">Select City</option>
+              <option>Mumbai</option>
+              <option>Delhi NCR</option>
+              <option>Bangalore</option>
+              <option>Hyderabad</option>
+              <option>Pune</option>
+              <option>Chennai</option>
+              <option>Nagpur</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-muted text-xs font-medium mb-1 block">Looking for (Skill) *</label>
+            <select id="bzSkill" required class="w-full px-4 py-2.5 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors appearance-none">
+              <option value="">Select</option>
+              <option>UI/UX Design</option>
+              <option>Graphic Design</option>
+              <option>Web Development</option>
+              <option>App Development</option>
+              <option>Content Writing</option>
+              <option>Video Editing</option>
+              <option>Social Media</option>
+              <option>Data Entry</option>
+              <option>Marketing</option>
+              <option>Electrician</option>
+              <option>Plumber</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div>
+              <label class="text-muted text-xs font-medium mb-1 block">Talent Level *</label>
+              <select id="bzLevel" required class="w-full px-4 py-2.5 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors appearance-none">
+                <option value="">Select</option>
+                <option>Fresher</option>
+                <option>Intermediate</option>
+                <option>Experienced</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-muted text-xs font-medium mb-1 block">People Needed *</label>
+              <input type="number" id="bzCount" required min="1" class="w-full px-4 py-2.5 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors" placeholder="e.g. 5">
+            </div>
+          </div>
+          <div>
+            <label class="text-muted text-xs font-medium mb-1 block">Engagement Type *</label>
+            <select id="bzEngage" required class="w-full px-4 py-2.5 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors appearance-none">
+              <option value="">Select</option>
+              <option>Hourly</option>
+              <option>Weekly</option>
+              <option>Monthly</option>
+              <option>Project based</option>
+            </select>
+          </div>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div>
+              <label class="text-muted text-xs font-medium mb-1 block">Budget / Pay Range</label>
+              <input type="text" id="bzBudget" class="w-full px-4 py-2.5 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors" placeholder="e.g. ₹50k - ₹1L">
+            </div>
+            <div>
+              <label class="text-muted text-xs font-medium mb-1 block">Work Mode *</label>
+              <select id="bzMode" required class="w-full px-4 py-2.5 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors appearance-none">
+                <option value="">Select</option>
+                <option>Remote</option>
+                <option>On-site</option>
+                <option>Hybrid</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="text-muted text-xs font-medium mb-1 block">Urgency *</label>
+            <div id="bzUrgCtrl" class="flex gap-2 flex-wrap">
+              <button type="button" class="seg-btn flex-1" onclick="selBzUrg(this)">Immediate</button>
+              <button type="button" class="seg-btn flex-1" onclick="selBzUrg(this)">This week</button>
+              <button type="button" class="seg-btn flex-1" onclick="selBzUrg(this)">Flexible</button>
+            </div>
+            <input type="hidden" id="bzUrg" required>
+          </div>
+          <div>
+            <label class="text-muted text-xs font-medium mb-1 block">Additional Notes</label>
+            <textarea id="bzNotes" rows="3" class="w-full px-4 py-2.5 rounded-xl border border-bord bg-card text-txt text-sm outline-none focus:border-cyan transition-colors resize-none" placeholder="Share project details, timelines or key requirements."></textarea>
+          </div>
+          <button type="submit" id="bzSubmitBtn" disabled class="w-full bg-cyan hover:bg-cyan/90 text-base font-semibold py-3.5 rounded-xl text-sm transition-colors shadow-lg shadow-cyan/20 mt-2 disabled:opacity-40 disabled:cursor-not-allowed">Submit Enquiry</button>
+          <p id="bzErr" class="text-rose text-xs hidden text-center">Fill all required fields.</p>
+        </form>
+      </div>
+    </div>
+
+    <!-- SUCCESS STATE -->
+    <div id="mSuccess" class="p-8 pt-12 hidden text-center">
+      <div class="w-16 h-16 rounded-full bg-mint/15 flex items-center justify-center mx-auto mb-5"><i class="fa-solid fa-check text-mint text-2xl"></i></div>
+      <h3 class="font-display font-700 text-xl mb-2">Enquiry received</h3>
+      <p class="text-muted text-sm mb-7">Our team will reach out on WhatsApp shortly. SERA is already preparing your matches.</p>
+      <a href="https://wa.me/919876543210?text=Hi%20SERA%2C%20I%20just%20submitted%20an%20enquiry." target="_blank" rel="noopener" class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors shadow-md"><i class="fa-brands fa-whatsapp text-lg"></i> Chat with us</a>
+      <button onclick="closeModal()" class="block mx-auto mt-4 text-muted hover:text-txt text-sm transition-colors">Close</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============ TOAST ============ -->
+<div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-[200] bg-card border border-bord text-txt px-5 py-2.5 rounded-xl shadow-xl text-sm font-medium transition-all duration-300 opacity-0 translate-y-4 pointer-events-none flex items-center gap-2">
+  <i class="fa-solid fa-circle-check text-mint text-xs"></i>
+  <span id="toastTxt"></span>
+</div>
+
+<script>
+/* ========== INTRO VIDEO (Robust Version) ========== */
+document.addEventListener('DOMContentLoaded', function() {
+  const overlay = document.getElementById('introOverlay');
+  const video = document.getElementById('introVideo');
+  const skipBtn = document.getElementById('skipIntro');
+  const fallback = document.getElementById('introFallback');
+
+  if (!overlay || !video) return;
+
+  let closed = false;
+
+  function closeIntro() {
+    if (closed) return;
+    closed = true;
+    overlay.classList.add('hide');
+    document.body.classList.remove('intro-active');
+    setTimeout(() => {
+      if (overlay.parentNode) overlay.remove();
+    }, 500);
+  }
+
+  // Skip button always works
+  if (skipBtn) skipBtn.addEventListener('click', closeIntro);
+
+  // Hide loading when video actually plays
+  video.addEventListener('playing', () => {
+    if (fallback) fallback.style.display = 'none';
+  });
+
+  // Close when video ends
+  video.addEventListener('ended', closeIntro);
+
+  // If video has any error → close overlay
+  video.addEventListener('error', closeIntro);
+
+  // Force try to play
+  video.muted = true;
+  video.playsInline = true;
+
+  const playPromise = video.play();
+
+  if (playPromise !== undefined) {
+    playPromise
+      .then(() => {
+        // Playing successfully
+        if (fallback) fallback.style.display = 'none';
+      })
+      .catch(() => {
+        // Autoplay blocked → still show video, user can click play or skip
+        if (fallback) fallback.style.display = 'none';
+        console.log('Autoplay blocked – click the video or Skip');
+      });
+  }
+
+  // Safety: if nothing happens in 4 seconds, hide loading and keep overlay
+  setTimeout(() => {
+    if (fallback) fallback.style.display = 'none';
+  }, 4000);
+
+  // Unmute button
+  const unmuteBtn = document.getElementById('unmuteBtn');
+  if (unmuteBtn) {
+    unmuteBtn.addEventListener('click', function() {
+      video.muted = false;
+      video.volume = 1;
+      unmuteBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i> <span>Sound On</span>';
+      unmuteBtn.classList.add('bg-cyan-600');
+    });
+  }
+});
+
+/* ====== CAROUSEL ====== */
+let curSlide = 0;
+const totalSlides = 4;
+let autoSlide;
+
+function updateCarousel() {
+  document.getElementById('carouselTrack').style.transform = `translateX(-${curSlide * 100}%)`;
+  document.querySelectorAll('#carouselDots .dot').forEach((d, i) => {
+    d.classList.toggle('bg-cyan', i === curSlide);
+    d.classList.toggle('bg-white/20', i !== curSlide);
+  });
+}
+
+function nextSlide() { curSlide = (curSlide + 1) % totalSlides; updateCarousel(); resetAuto(); }
+function prevSlide() { curSlide = (curSlide - 1 + totalSlides) % totalSlides; updateCarousel(); resetAuto(); }
+function resetAuto() { clearInterval(autoSlide); autoSlide = setInterval(nextSlide, 5000); }
+
+// Init dots
+const dotsCont = document.getElementById('carouselDots');
+for (let i = 0; i < totalSlides; i++) {
+  const d = document.createElement('button');
+  d.className = `dot w-2 h-2 rounded-full transition-colors ${i === 0 ? 'bg-cyan' : 'bg-white/20'}`;
+  d.setAttribute('aria-label', `Slide ${i + 1}`);
+  d.onclick = () => { curSlide = i; updateCarousel(); resetAuto(); };
+  dotsCont.appendChild(d);
+}
+autoSlide = setInterval(nextSlide, 5000);
+
+/* ====== DASHBOARD COUNTER ANIMATIONS ====== */
+let dashAnimated = false;
+const dashObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting && !dashAnimated) {
+      dashAnimated = true;
+      animateCounter('skHours', 0, 34, 1200, 'h');
+      animateCounter('skEarnings', 0, 8400, 1200, '₹', true);
+      animateCounter('skCompletion', 0, 87, 1200, '%');
+      animateCounter('bzSkillers', 0, 14, 1200);
+      animateCounter('bzProjects', 0, 6, 1200);
+      animateCounter('bzSpent', 0, 128000, 1200, '₹', true);
+    }
+  });
+}, { threshold: 0.3 });
+
+document.querySelectorAll('.dash-frame').forEach(el => dashObs.observe(el));
+
+function animateCounter(id, from, to, dur, suffix = '', indian = false) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const start = performance.now();
+  function step(now) {
+    const progress = Math.min((now - start) / dur, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const val = Math.round(from + (to - from) * eased);
+    let display = indian ? indianFormat(val) : val.toLocaleString();
+    el.textContent = suffix === '₹' ? `₹${display}` : `${display}${suffix}`;
+    if (progress < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+function indianFormat(n) {
+  const s = n.toString();
+  if (s.length <= 3) return s;
+  return s.slice(0, -3).replace(/\B(?=(\d{2})+(?!\d))/g, ',') + ',' + s.slice(-3);
+}
+
+/* ====== MODAL LOGIC ====== */
+let currentTab = 'skiller';
+
+function openModal(type) {
+  const modalEl = document.getElementById('modal');
+  modalEl.classList.remove('hidden');
+  modalEl.style.display = 'block';
+  document.body.style.overflow = 'hidden';
+
+  // Reset everything first
+  document.getElementById('skillerForm')?.classList.add('hidden');
+  document.getElementById('businessForm')?.classList.add('hidden');
+
+  if (type === 'skiller') {
+    currentTab = 'skiller';
+    showState('mForm');
+    document.getElementById('skillerForm').classList.remove('hidden');
+    document.getElementById('businessForm').classList.add('hidden');
+  } 
+  else if (type === 'business') {
+    currentTab = 'business';
+    showState('mForm');
+    document.getElementById('businessForm').classList.remove('hidden');
+    document.getElementById('skillerForm').classList.add('hidden');
+  } 
+  else {
+    // Join Now button
+    currentTab = 'join';
+    showState('mJoin');
+  }
+}
+
+function closeModal() {
+  const modalEl = document.getElementById('modal');
+  modalEl.classList.add('hidden');
+  modalEl.style.display = 'none';
+  document.body.style.overflow = '';
+  setTimeout(resetModal, 300);
+}
+
+/* ====== TAB SWITCHING ====== */
+function switchTab(tab) {
+  // Update tab buttons
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    if (btn.dataset.tab === tab) {
+      btn.classList.add('active');
+      btn.classList.remove('text-muted');
+    } else {
+      btn.classList.remove('active');
+      btn.classList.add('text-muted');
+    }
+  });
+
+  // Show/hide sections
+  const skillerSections = document.querySelectorAll('.section-skiller');
+  const businessSections = document.querySelectorAll('.section-business');
+
+  if (tab === 'skiller') {
+    skillerSections.forEach(el => {
+      el.classList.remove('section-hidden');
+      el.classList.add('section-visible');
+    });
+    businessSections.forEach(el => {
+      el.classList.add('section-hidden');
+      el.classList.remove('section-visible');
+    });
+  } else {
+    businessSections.forEach(el => {
+      el.classList.remove('section-hidden');
+      el.classList.add('section-visible');
+    });
+    skillerSections.forEach(el => {
+      el.classList.add('section-hidden');
+      el.classList.remove('section-visible');
+    });
+  }
+}
+
+function resetModal() {
+  showState('mJoin');
+  document.getElementById('phoneArea').classList.remove('hidden');
+  document.getElementById('otpArea').classList.add('hidden');
+  document.getElementById('phErr').classList.add('hidden');
+  document.getElementById('skErr').classList.add('hidden');
+  document.getElementById('bzErr').classList.add('hidden');
+  document.getElementById('skillerForm').classList.add('hidden');
+  document.getElementById('businessForm').classList.add('hidden');
+  document.querySelectorAll('#skillerForm form, #businessForm form').forEach(f => f.reset());
+  document.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('sel'));
+  document.querySelectorAll('.otp-box').forEach(b => b.value = '');
+  const verBtn = document.getElementById('verBtn'); if (verBtn) verBtn.disabled = true;
+  const joinVerifyBtn = document.getElementById('joinOtpVerifyBtn'); if (joinVerifyBtn) joinVerifyBtn.disabled = true;
+  const joinOtpAreaEl = document.getElementById('joinOtpArea'); if (joinOtpAreaEl) joinOtpAreaEl.classList.add('hidden');
+  const joinNameFieldEl = document.getElementById('joinNameField'); if (joinNameFieldEl) joinNameFieldEl.classList.add('hidden');
+  const joinCompanyFieldEl = document.getElementById('joinCompanyField'); if (joinCompanyFieldEl) joinCompanyFieldEl.classList.add('hidden');
+  const joinTypeEl = document.getElementById('joinType'); if (joinTypeEl) joinTypeEl.value = '';
+  const joinPhoneEl = document.getElementById('joinPhone'); if (joinPhoneEl) joinPhoneEl.value = '';
+  const joinEmailEl = document.getElementById('joinEmail'); if (joinEmailEl) joinEmailEl.value = '';
+  const joinNameEl = document.getElementById('joinName'); if (joinNameEl) joinNameEl.value = '';
+  const joinCompanyEl = document.getElementById('joinCompany'); if (joinCompanyEl) joinCompanyEl.value = '';
+  const joinCallTimeEl = document.getElementById('joinCallTime'); if (joinCallTimeEl) joinCallTimeEl.value = '';
+  document.getElementById('phIn').value = '';
+  document.getElementById('bzUrg').value = '';
+}
+
+function showState(id) {
+  ['mJoin','mOTP','mForm','mSuccess'].forEach(s => {
+    const el = document.getElementById(s);
+    if (el) el.classList.toggle('hidden', s !== id);
+  });
+}
+
+function showOTP() { showState('mOTP'); document.getElementById('phoneArea').classList.remove('hidden'); document.getElementById('otpArea').classList.add('hidden'); document.getElementById('phIn').focus(); }
+function showAuth() { showState('mJoin'); }
+
+function sendOtp() {
+  const phoneInput = document.getElementById('joinPhone') || document.getElementById('phIn');
+  const errField = document.getElementById('joinPhoneErr') || document.getElementById('phErr');
+  const phone = phoneInput?.value.trim() || '';
+  if (phone.length !== 10) {
+    if (errField) errField.classList.remove('hidden');
+    return;
+  }
+  if (errField) errField.classList.add('hidden');
+  const joinOtpAreaEl2 = document.getElementById('joinOtpArea'); if (joinOtpAreaEl2) joinOtpAreaEl2.classList.remove('hidden');
+  const joinPhDispEl = document.getElementById('joinPhDisp'); if (joinPhDispEl) joinPhDispEl.textContent = '+91 ' + phone;
+  const firstOtpBox = document.querySelectorAll('.otp-box')[0]; if (firstOtpBox) firstOtpBox.focus();
+  toast('OTP sent to +91 ' + phone);
+}
+
+function otIn(box, i) { box.value = box.value.replace(/\D/g, ''); if (box.value && i < 5) document.querySelectorAll('.otp-box')[i + 1].focus(); checkOtp(); }
+function checkOtp() { const boxes = document.querySelectorAll('.otp-box'); let ok = true; boxes.forEach(b => { if (!b.value) ok = false; }); const ver = document.getElementById('verBtn'); if (ver) ver.disabled = !ok; const jv = document.getElementById('joinOtpVerifyBtn'); if (jv) jv.disabled = !ok; }
+
+function verifyOtp() {
+  let otp = '';
+  document.querySelectorAll('.otp-box').forEach(b => otp += b.value);
+  if (otp.length !== 6) return;
+  toast('Phone verified');
+  showState('mForm');
+  if (currentTab === 'skiller') {
+    document.getElementById('skillerForm').classList.remove('hidden');
+    document.getElementById('businessForm').classList.add('hidden');
+  } else {
+    document.getElementById('businessForm').classList.remove('hidden');
+    document.getElementById('skillerForm').classList.add('hidden');
+  }
+}
+
+function updateJoinFields() {
+  const type = document.getElementById('joinType').value;
+  if (type === 'skiller' || type === 'business') {
+    currentTab = type;
+  }
+  const isSkiller = type === 'skiller';
+  document.getElementById('joinNameField').classList.toggle('hidden', !isSkiller);
+  document.getElementById('joinCompanyField').classList.toggle('hidden', isSkiller);
+}
+
+function submitJoin(e) {
+  e.preventDefault();
+  const jv = document.getElementById('joinOtpVerifyBtn');
+  if (!jv || jv.disabled) {
+    toast('Please verify your phone before submitting.');
+    return;
+  }
+  toast('OTP verified. Continue to complete your enquiry.');
+}
+
+function selBzUrg(btn) {
+  document.querySelectorAll('#bzUrgCtrl .seg-btn').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  document.getElementById('bzUrg').value = btn.textContent;
+}
+
+/* ========== FORM OTP VERIFICATION ========== */
+let skVerified = false;
+let bzVerified = false;
+
+function sendFormOtp(type) {
+  const isSkiller = type === 'skiller';
+  const phoneId = isSkiller ? 'skPhone' : 'bzPhone';
+  const errId = isSkiller ? 'skPhoneErr' : 'bzPhoneErr';
+  const areaId = isSkiller ? 'skOtpArea' : 'bzOtpArea';
+  const dispId = isSkiller ? 'skPhDisp' : 'bzPhDisp';
+
+  const phone = document.getElementById(phoneId).value.trim();
+  if (phone.length !== 10) {
+    document.getElementById(errId).classList.remove('hidden');
+    return;
+  }
+  document.getElementById(errId).classList.add('hidden');
+  document.getElementById(areaId).classList.remove('hidden');
+  document.getElementById(dispId).textContent = '+91 ' + phone;
+  
+  // Focus first OTP box
+  const firstBox = document.querySelector(`.${isSkiller ? 'sk' : 'bz'}-otp`);
+  if (firstBox) firstBox.focus();
+  
+  toast('OTP sent to +91 ' + phone);
+}
+
+function otInForm(box, index, prefix) {
+  box.value = box.value.replace(/\D/g, '');
+  const boxes = document.querySelectorAll(`.${prefix}-otp`);
+  if (box.value && index < boxes.length - 1) {
+    boxes[index + 1].focus();
+  }
+  checkFormOtp(prefix);
+}
+
+function otKd(e, box, index, prefix) {
+  if (e.key === 'Backspace' && !box.value && index > 0) {
+    const boxes = document.querySelectorAll(`.${prefix}-otp`);
+    boxes[index - 1].focus();
+  }
+}
+
+function checkFormOtp(prefix) {
+  const boxes = document.querySelectorAll(`.${prefix}-otp`);
+  let complete = true;
+  boxes.forEach(b => {
+    if (!b.value) complete = false;
+  });
+  const btnId = prefix === 'sk' ? 'skVerifyBtn' : 'bzVerifyBtn';
+  document.getElementById(btnId).disabled = !complete;
+}
+
+function verifyFormOtp(type) {
+  const isSkiller = type === 'skiller';
+  const prefix = isSkiller ? 'sk' : 'bz';
+  
+  let otp = '';
+  document.querySelectorAll(`.${prefix}-otp`).forEach(b => otp += b.value);
+  
+  if (otp.length !== 6) return;
+
+  if (isSkiller) {
+    skVerified = true;
+    document.getElementById('skVerifiedMsg').classList.remove('hidden');
+    document.getElementById('skVerifyBtn').textContent = 'Verified ✓';
+    document.getElementById('skVerifyBtn').disabled = true;
+    document.getElementById('skSubmitBtn').disabled = false;
+  } else {
+    bzVerified = true;
+    document.getElementById('bzVerifiedMsg').classList.remove('hidden');
+    document.getElementById('bzVerifyBtn').textContent = 'Verified ✓';
+    document.getElementById('bzVerifyBtn').disabled = true;
+    document.getElementById('bzSubmitBtn').disabled = false;
+  }
+  
+  toast('Phone verified successfully');
+}
+
+function submitSkiller(e) {
+  e.preventDefault();
+  
+  if (!skVerified) {
+    toast('Please verify your phone number first');
+    return;
+  }
+
+  const data = {
+    type: 'Skiller',
+    name: document.getElementById('skName').value.trim(),
+    phone: document.getElementById('skPhone').value.trim(),
+    city: document.getElementById('skCity').value,
+    status: document.getElementById('skStatus').value,
+    experience: document.getElementById('skExp').value,
+    years: document.getElementById('skYears').value,
+    skill: document.getElementById('skSkill').value,
+    otherSkills: document.getElementById('skOtherSkills').value,
+    mode: document.getElementById('skMode').value,
+    availability: document.getElementById('skAvail').value,
+    expectedPay: document.getElementById('skPay').value,
+    linkedin: document.getElementById('skLinkedin').value,
+    instagram: document.getElementById('skInstagram').value,
+    portfolio: document.getElementById('skPortfolio').value,
+    about: document.getElementById('skAbout').value,
+    timestamp: new Date().toISOString()
+  };
+
+  if (!data.name || !data.city || !data.status || !data.experience || !data.skill || !data.mode || !data.availability) {
+    document.getElementById('skErr').classList.remove('hidden');
+    return;
+  }
+
+  document.getElementById('skErr').classList.add('hidden');
+  console.log('Skiller Enquiry:', data);
+  showState('mSuccess');
+}
+
+function submitBusiness(e) {
+  e.preventDefault();
+  
+  if (!bzVerified) {
+    toast('Please verify your phone number first');
+    return;
+  }
+
+  const data = {
+    type: 'Business',
+    company: document.getElementById('bzName').value.trim(),
+    phone: document.getElementById('bzPhone').value.trim(),
+    companyType: document.getElementById('bzType').value,
+    website: document.getElementById('bzWebsite').value,
+    city: document.getElementById('bzCity').value,
+    skill: document.getElementById('bzSkill').value,
+    level: document.getElementById('bzLevel').value,
+    count: document.getElementById('bzCount').value,
+    engagement: document.getElementById('bzEngage').value,
+    budget: document.getElementById('bzBudget').value,
+    mode: document.getElementById('bzMode').value,
+    urgency: document.getElementById('bzUrg').value,
+    notes: document.getElementById('bzNotes').value,
+    timestamp: new Date().toISOString()
+  };
+
+  if (!data.company || !data.companyType || !data.city || !data.skill || !data.level || !data.count || !data.engagement || !data.mode || !data.urgency) {
+    document.getElementById('bzErr').classList.remove('hidden');
+    return;
+  }
+
+  document.getElementById('bzErr').classList.add('hidden');
+  console.log('Business Enquiry:', data);
+  showState('mSuccess');
+}
+
+function simGoogle() { toast('Google sign-in successful'); setTimeout(() => {
+  showState('mForm');
+  if (currentTab === 'skiller') {
+    document.getElementById('skillerForm').classList.remove('hidden');
+    document.getElementById('businessForm').classList.add('hidden');
+  } else {
+    document.getElementById('businessForm').classList.remove('hidden');
+    document.getElementById('skillerForm').classList.add('hidden');
+  }
+  document.getElementById(currentTab === 'skiller' ? 'skName' : 'bzName').focus();
+}, 500); }
+
+/* ====== TOAST ======*/
+function toast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastTxt').textContent = msg;
+  t.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+  t.classList.add('opacity-100', 'translate-y-0');
+  setTimeout(() => { t.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none'); t.classList.remove('opacity-100', 'translate-y-0'); }, 2800);
+}
+
+/* ====== KEYBOARD ====== */
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !document.getElementById('modal').classList.contains('hidden')) closeModal(); });
+
+/* ====== SMOOTH SCROLL ====== */
+document.querySelectorAll('a[href^="#"]').forEach(a => { a.addEventListener('click', function(e) { const t = document.querySelector(this.getAttribute('href')); if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); } }); });
+
+/* ====== FADE-UP OBSERVER ====== */
+const fadeObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('vis');
+    }
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.fade-up').forEach(el => fadeObs.observe(el));
+</script>
+</body>
+</html>
